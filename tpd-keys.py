@@ -27,7 +27,7 @@ from requests.utils import dict_from_cookiejar
 import http
 from os import urandom
 
-MyWVD = "./google_aosp_on_ia_emulator_14.0.0_b206f572_4464_l3.wvd"
+MyWVD = "/PATH/TO/WVD.wvd"
 
 dbconnection = sqlite3.connect("database.db")
 dbcursor = dbconnection.cursor()
