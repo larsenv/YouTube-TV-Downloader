@@ -1,0 +1,4 @@
+pywidevine
+requests
+httpx
+pyyaml
