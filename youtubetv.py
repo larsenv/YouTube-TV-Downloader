@@ -98,6 +98,29 @@ if platform.system() != "Windows":
             + "\n"
         )
         f.write(
+            "yt-dlp"
+            + " "
+            + "-f"
+            + " "
+            + '"'
+            + "m4a"
+            + '"'
+            + " "
+            + "--output"
+            + " "
+            + '"'
+            + video_id
+            + "-encrypted.m4a"
+            + '"'
+            + " "
+            + "--allow-unplayable-formats"
+            + " "
+            + '"'
+            + manifest_url
+            + '"'
+            + "\n"
+        )
+        f.write(
             "mp4decrypt --key"
             + " "
             + '"'
@@ -220,6 +243,29 @@ else:
             + " "
             + '"'
             + manifest_url.replace("%", "%%")
+            + '"'
+            + "\n"
+        )
+        f.write(
+            ".\yt-dlp"
+            + " "
+            + "-f"
+            + " "
+            + '"'
+            + "m4a"
+            + '"'
+            + " "
+            + "--output"
+            + " "
+            + '"'
+            + video_id
+            + "-encrypted.m4a"
+            + '"'
+            + " "
+            + "--allow-unplayable-formats"
+            + " "
+            + '"'
+            + manifest_url
             + '"'
             + "\n"
         )
