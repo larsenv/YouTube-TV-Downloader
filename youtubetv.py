@@ -34,12 +34,10 @@ video_url = get_manifest_url(video_id)
 param = video_url[0]
 manifest_url = video_url[1]
 
-output = subprocess.check_output(["python3.9", "tpd-keys.py", video_id, param])
+output = subprocess.check_output(["python3", "tpd-keys.py", video_id, param])
 
 key_audio = output.split(b"\n")[-3].decode("utf-8")
 key_video = output.split(b"\n")[-5].decode("utf-8")
-
-print(output)
 
 print("Video URL:", manifest_url)
 print("Key Audio:", key_audio)
@@ -49,6 +47,8 @@ print("\n")
 
 if platform.system() != "Windows":
     print("Saving script to download video into file called run.sh.")
+
+    print(manifest_url.replace("%", "%%"))
 
     with open("run.sh", "w") as f:
         f.write(
@@ -224,39 +224,43 @@ else:
             + "\n"
         )
         f.write(
-            ".\mp4decrypt --key"
+            ".\shaka-packager.exe"
             + " "
-            + '"'
-            + key_video
-            + '"'
-            + " "
-            + '"'
+            + "in="
             + video_id
             + "-encrypted.mp4"
-            + '"'
-            + " "
-            + '"'
+            + ",stream=video,output="
             + video_id
             + "-decrypted.mp4"
-            + '"'
+            + " "
+            + "--enable_raw_key_decryption"
+            + " "
+            + "--keys"
+            + " "
+            + "key_id="
+            + key_video.split(":")[0]
+            + ":key="
+            + key_video.split(":")[1]
             + "\n"
         )
         f.write(
-            ".\mp4decrypt --key"
+            ".\shaka-packager.exe"
             + " "
-            + '"'
-            + key_audio
-            + '"'
-            + " "
-            + '"'
+            + "in="
             + video_id
             + "-encrypted.m4a"
-            + '"'
-            + " "
-            + '"'
+            + ",stream=audio,output="
             + video_id
             + "-decrypted.m4a"
-            + '"'
+            + " "
+            + "--enable_raw_key_decryption"
+            + " "
+            + "--keys"
+            + " "
+            + "key_id="
+            + key_audio.split(":")[0]
+            + ":key="
+            + key_audio.split(":")[1]
             + "\n"
         )
         f.write("del" + " " + '"' + video_id + "-encrypted.mp4" + '"' + "\n")
