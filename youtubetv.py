@@ -194,8 +194,6 @@ if platform.system() != "Windows":
 
     subprocess.call(["sh", "./run.sh"])
 
-    print("Done.")
-
 else:
     print("Saving script to download video into file called run.bat.")
 
@@ -347,4 +345,5 @@ else:
 
     subprocess.call(["run.bat"])
 
-    print("Done.")
+
+print("Done.")

@@ -50,13 +50,11 @@ class Settings:
                               "NO", "NZ", "PL", "RO", "RU", "SE", "SG", "SK", "TR", "UK", "US", "GB"]
 
     def get_ext_ver(self) -> str:
-        about = httpx.get("https://hola.org/access/my/settings#/about").text
-        if 'window.pub_config.init({"ver":"' in about:
-            version = about.split('window.pub_config.init({"ver":"')[1].split('"')[0]
-            return version
-
-        # last know working version
-        return "1.199.485"
+      about = httpx.get("https://hola.org/access/my/settings#/about").text
+      if 'window.pub_config.init({"ver":"' in about:
+        return about.split('window.pub_config.init({"ver":"')[1].split('"')[0]
+      # last know working version
+      return "1.199.485"
 
 
 class Engine:
@@ -111,16 +109,14 @@ class Hola:
 
     def get_country(self) -> str:
 
-        if not self.settings.randomProxy and not self.settings.userCountry:
-            self.settings.userCountry = httpx.get(self.myipUri).json()["country"]
+      if not self.settings.randomProxy and not self.settings.userCountry:
+          self.settings.userCountry = httpx.get(self.myipUri).json()["country"]
 
-        if (
-            not self.settings.userCountry in self.settings.zoneAvailable
-            or self.settings.randomProxy
-        ):
-            self.settings.userCountry = random.choice(self.settings.zoneAvailable)
+      if (self.settings.userCountry not in self.settings.zoneAvailable
+          or self.settings.randomProxy):
+        self.settings.userCountry = random.choice(self.settings.zoneAvailable)
 
-        return self.settings.userCountry
+      return self.settings.userCountry
 
 def cache_key(cpssh: str, ckeys: str):
     dbconnection = sqlite3.connect("database.db")
@@ -149,43 +145,40 @@ def init_proxy(data):
     return engine.get_proxy(tunnels)
     
 def calculate_signature(method, url, headers, payload, timestamp=None):
-    app_id = 'SKYSHOWTIME-ANDROID-v1'
-    signature_key = bytearray('jfj9qGg6aDHaBbFpH6wNEvN6cHuHtZVppHRvBgZs', 'utf-8')
-    sig_version = '1.0'
+  app_id = 'SKYSHOWTIME-ANDROID-v1'
+  signature_key = bytearray('jfj9qGg6aDHaBbFpH6wNEvN6cHuHtZVppHRvBgZs', 'utf-8')
+  sig_version = '1.0'
 
-    if not timestamp:
-      timestamp = int(time.time())
+  if not timestamp:
+    timestamp = int(time.time())
 
-    if url.startswith('http'):
-      parsed_url = urlparse(url)
-      path = parsed_url.path
-    else:
-      path = url
+  if url.startswith('http'):
+    parsed_url = urlparse(url)
+    path = parsed_url.path
+  else:
+    path = url
 
-    #print('path: {}'.format(path))
+  text_headers = ''.join(f'{key}: {headers[key]}' + '\n'
+                         for key in sorted(headers.keys())
+                         if key.lower().startswith('x-skyott'))
+  #print(text_headers)
+  headers_md5 = hashlib.md5(text_headers.encode()).hexdigest()
+  #print(headers_md5)
 
-    text_headers = ''
-    for key in sorted(headers.keys()):
-      if key.lower().startswith('x-skyott'):
-        text_headers += key + ': ' + headers[key] + '\n'
-    #print(text_headers)
-    headers_md5 = hashlib.md5(text_headers.encode()).hexdigest()
-    #print(headers_md5)
+  if sys.version_info[0] > 2 and isinstance(payload, str):
+    payload = payload.encode('utf-8')
+  payload_md5 = hashlib.md5(payload).hexdigest()
 
-    if sys.version_info[0] > 2 and isinstance(payload, str):
-      payload = payload.encode('utf-8')
-    payload_md5 = hashlib.md5(payload).hexdigest()
+  to_hash = ('{method}\n{path}\n{response_code}\n{app_id}\n{version}\n{headers_md5}\n'
+            '{timestamp}\n{payload_md5}\n').format(method=method, path=path,
+              response_code='', app_id=app_id, version=sig_version,
+              headers_md5=headers_md5, timestamp=timestamp, payload_md5=payload_md5)
+  #print(to_hash)
 
-    to_hash = ('{method}\n{path}\n{response_code}\n{app_id}\n{version}\n{headers_md5}\n'
-              '{timestamp}\n{payload_md5}\n').format(method=method, path=path,
-                response_code='', app_id=app_id, version=sig_version,
-                headers_md5=headers_md5, timestamp=timestamp, payload_md5=payload_md5)
-    #print(to_hash)
+  hashed = hmac.new(signature_key, to_hash.encode('utf8'), hashlib.sha1).digest()
+  signature = base64.b64encode(hashed).decode('utf8')
 
-    hashed = hmac.new(signature_key, to_hash.encode('utf8'), hashlib.sha1).digest()
-    signature = base64.b64encode(hashed).decode('utf8')
-
-    return 'SkyOTT client="{}",signature="{}",timestamp="{}",version="{}"'.format(app_id, signature, timestamp, sig_version)
+  return f'SkyOTT client="{app_id}",signature="{signature}",timestamp="{timestamp}",version="{sig_version}"'
 
 
 allowed_countries = [
