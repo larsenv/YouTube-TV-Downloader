@@ -56,9 +56,7 @@ print("\n")
 print(manifest_url.replace("%", "%%"))
 
 os.system(
-    "./"
-    if platform.system() == "Windows"
-    else ""
+    (".\\" if platform.system() == "Windows" else "")
     + "yt-dlp"
     + " "
     + "-f"
@@ -81,9 +79,7 @@ os.system(
     + '"'
 )
 os.system(
-    "./"
-    if platform.system() == "Windows"
-    else ""
+    (".\\" if platform.system() == "Windows" else "")
     + "yt-dlp"
     + " "
     + "-f"
@@ -106,9 +102,7 @@ os.system(
     + '"'
 )
 os.system(
-    "./"
-    if platform.system() == "Windows"
-    else ""
+    (".\\" if platform.system() == "Windows" else "")
     + "yt-dlp"
     + " "
     + "-f"
@@ -131,9 +125,7 @@ os.system(
     + '"'
 )
 os.system(
-    "./"
-    if platform.system() == "Windows"
-    else ""
+    (".\\" if platform.system() == "Windows" else "")
     + "yt-dlp"
     + " "
     + "-f"
@@ -156,9 +148,7 @@ os.system(
     + '"'
 )
 os.system(
-    "./"
-    if platform.system() == "Windows"
-    else ""
+    (".\\" if platform.system() == "Windows" else "")
     + "shaka-packager"
     + " "
     + "in="
@@ -178,9 +168,8 @@ os.system(
     + key_video.split(":")[1]
 )
 os.system(
-    "./"
-    if platform.system() == "Windows"
-    else ""
+    (".\\" if platform.system() == "Windows" else "")
+    + "shaka-packager"
     + " "
     + "in="
     + video_id
@@ -199,9 +188,7 @@ os.system(
     + key_audio.split(":")[1]
 )
 os.system(
-    "./"
-    if platform.system() == "Windows"
-    else ""
+    (".\\" if platform.system() == "Windows" else "")
     + "shaka-packager"
     + " "
     + "in="
@@ -222,9 +209,7 @@ os.system(
 )
 if os.path.exists(video_id + "-secondary-decrypted.m4a"):
     os.system(
-        "./"
-        if platform.system() == "Windows"
-        else ""
+        (".\\" if platform.system() == "Windows" else "")
         + "ffmpeg"
         + " "
         + "-i"
@@ -273,10 +258,8 @@ if os.path.exists(video_id + "-secondary-decrypted.m4a"):
     )
 else:
     os.system(
-        "./"
-        if platform.system() == "Windows"
-        else "" + "rm"
-        "ffmpeg"
+        (".\\" if platform.system() == "Windows" else "")
+        + "ffmpeg"
         + " "
         + "-i"
         + " "
@@ -304,34 +287,52 @@ else:
         + '"'
     )
 os.system(
-    "del"
-    if platform.system() == "Windows"
-    else "rm" + " " + '"' + video_id + "-encrypted.mp4" + '"'
+    ("del" if platform.system() == "Windows" else "rm")
+    + " "
+    + '"'
+    + video_id
+    + "-encrypted.mp4"
+    + '"'
 )
 os.system(
-    "del"
-    if platform.system() == "Windows"
-    else "rm" + " " + '"' + video_id + "-encrypted.m4a" + '"'
+    ("del" if platform.system() == "Windows" else "rm")
+    + " "
+    + '"'
+    + video_id
+    + "-encrypted.m4a"
+    + '"'
 )
 os.system(
-    "del"
-    if platform.system() == "Windows"
-    else "rm" + " " + '"' + video_id + "-secondary-encrypted.m4a" + '"'
+    ("del" if platform.system() == "Windows" else "rm")
+    + " "
+    + '"'
+    + video_id
+    + "-secondary-encrypted.m4a"
+    + '"'
 )
 os.system(
-    "del"
-    if platform.system() == "Windows"
-    else "rm" + " " + '"' + video_id + "-decrypted.mp4" + '"'
+    ("del" if platform.system() == "Windows" else "rm")
+    + " "
+    + '"'
+    + video_id
+    + "-decrypted.mp4"
+    + '"'
 )
 os.system(
-    "del"
-    if platform.system() == "Windows"
-    else "rm" + " " + '"' + video_id + "-decrypted.m4a" + '"'
+    ("del" if platform.system() == "Windows" else "rm")
+    + " "
+    + '"'
+    + video_id
+    + "-decrypted.m4a"
+    + '"'
 )
 os.system(
-    "del"
-    if platform.system() == "Windows"
-    else "rm" + " " + '"' + video_id + "-secondary-decrypted.m4a" + '"'
+    ("del" if platform.system() == "Windows" else "rm")
+    + " "
+    + '"'
+    + video_id
+    + "-secondary-decrypted.m4a"
+    + '"'
 )
 
 
