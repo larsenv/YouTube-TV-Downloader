@@ -1,6 +1,7 @@
 import DRMHeaders
 import glob
 import json
+import os
 import platform
 import requests
 import sys
@@ -36,8 +37,15 @@ manifest_url = video_url[1]
 
 output = subprocess.check_output(["python3", "tpd-keys.py", video_id, param])
 
-key_audio = output.split(b"\n")[-3].decode("utf-8")
-key_video = output.split(b"\n")[-5].decode("utf-8")
+if b":" in output.split(b"\n")[-7]:
+    key_audio = output.split(b"\n")[-7].decode("utf-8")
+else:
+    key_audio = output.split(b"\n")[-3].decode("utf-8")
+
+if b":" in output.split(b"\n")[-9]:
+    key_video = output.split(b"\n")[-7].decode("utf-8")
+else:
+    key_video = output.split(b"\n")[-5].decode("utf-8")
 
 print("Video URL:", manifest_url)
 print("Key Audio:", key_audio)
@@ -45,306 +53,286 @@ print("Key Video:", key_video)
 
 print("\n")
 
-if platform.system() != "Windows":
-    print("Saving script to download video into file called run.sh.")
+print(manifest_url.replace("%", "%%"))
 
-    print(manifest_url.replace("%", "%%"))
-
-    with open("run.sh", "w") as f:
-        f.write(
-            "yt-dlp"
-            + " "
-            + "-f"
-            + " "
-            + '"'
-            + "mp4"
-            + '"'
-            + " "
-            + "--output"
-            + " "
-            + '"'
-            + video_id
-            + "-encrypted.mp4"
-            + '"'
-            + " "
-            + "--allow-unplayable-formats"
-            + " "
-            + '"'
-            + manifest_url
-            + '"'
-            + "\n"
-        )
-        f.write(
-            "yt-dlp"
-            + " "
-            + "-f"
-            + " "
-            + '"'
-            + "149:ChAKBWFjb250EgdwcmltYXJ5"
-            + '"'
-            + " "
-            + "--output"
-            + " "
-            + '"'
-            + video_id
-            + "-encrypted.m4a"
-            + '"'
-            + " "
-            + "--allow-unplayable-formats"
-            + " "
-            + '"'
-            + manifest_url
-            + '"'
-            + "\n"
-        )
-        f.write(
-            "yt-dlp"
-            + " "
-            + "-f"
-            + " "
-            + '"'
-            + "m4a"
-            + '"'
-            + " "
-            + "--output"
-            + " "
-            + '"'
-            + video_id
-            + "-encrypted.m4a"
-            + '"'
-            + " "
-            + "--allow-unplayable-formats"
-            + " "
-            + '"'
-            + manifest_url
-            + '"'
-            + "\n"
-        )
-        f.write(
-            "mp4decrypt --key"
-            + " "
-            + '"'
-            + key_video
-            + '"'
-            + " "
-            + '"'
-            + video_id
-            + "-encrypted.mp4"
-            + '"'
-            + " "
-            + '"'
-            + video_id
-            + "-decrypted.mp4"
-            + '"'
-            + "\n"
-        )
-        f.write(
-            "mp4decrypt --key"
-            + " "
-            + '"'
-            + key_audio
-            + '"'
-            + " "
-            + '"'
-            + video_id
-            + "-encrypted.m4a"
-            + '"'
-            + " "
-            + '"'
-            + video_id
-            + "-decrypted.m4a"
-            + '"'
-            + "\n"
-        )
-        f.write("rm" + " " + '"' + video_id + "-encrypted.mp4" + '"' + "\n")
-        f.write("rm" + " " + '"' + video_id + "-encrypted.m4a" + '"' + "\n")
-        f.write(
-            "ffmpeg"
-            + " "
-            + "-i"
-            + " "
-            + '"'
-            + video_id
-            + "-decrypted.mp4"
-            + '"'
-            + " "
-            + "-i"
-            + " "
-            + '"'
-            + video_id
-            + "-decrypted.m4a"
-            + '"'
-            + " "
-            + "-c"
-            + " "
-            + '"'
-            + "copy"
-            + '"'
-            + " "
-            + '"'
-            + video_id
-            + ".mp4"
-            + '"'
-            + "\n"
-        )
-        f.write("rm" + " " + '"' + video_id + "-decrypted.mp4" + '"' + "\n")
-        f.write("rm" + " " + '"' + video_id + "-decrypted.m4a" + '"' + "\n")
-
-    print("Running run.sh.")
-
-    subprocess.call(["sh", "./run.sh"])
-
-    print("Done.")
-
+os.system(
+    "./"
+    if platform.system() == "Windows"
+    else ""
+    + "yt-dlp"
+    + " "
+    + "-f"
+    + " "
+    + '"'
+    + "mp4"
+    + '"'
+    + " "
+    + "--output"
+    + " "
+    + '"'
+    + video_id
+    + "-encrypted.mp4"
+    + '"'
+    + " "
+    + "--allow-unplayable-formats"
+    + " "
+    + '"'
+    + manifest_url
+    + '"'
+)
+os.system(
+    "./"
+    if platform.system() == "Windows"
+    else ""
+    + "yt-dlp"
+    + " "
+    + "-f"
+    + " "
+    + '"'
+    + "149:ChAKBWFjb250EgdwcmltYXJ5"
+    + '"'
+    + " "
+    + "--output"
+    + " "
+    + '"'
+    + video_id
+    + "-encrypted.m4a"
+    + '"'
+    + " "
+    + "--allow-unplayable-formats"
+    + " "
+    + '"'
+    + manifest_url
+    + '"'
+)
+os.system(
+    "./"
+    if platform.system() == "Windows"
+    else ""
+    + "yt-dlp"
+    + " "
+    + "-f"
+    + " "
+    + '"'
+    + "m4a"
+    + '"'
+    + " "
+    + "--output"
+    + " "
+    + '"'
+    + video_id
+    + "-encrypted.m4a"
+    + '"'
+    + " "
+    + "--allow-unplayable-formats"
+    + " "
+    + '"'
+    + manifest_url
+    + '"'
+)
+os.system(
+    "./"
+    if platform.system() == "Windows"
+    else ""
+    + "yt-dlp"
+    + " "
+    + "-f"
+    + " "
+    + '"'
+    + "149:ChIKBWFjb250EglzZWNvbmRhcnk"
+    + '"'
+    + " "
+    + "--output"
+    + " "
+    + '"'
+    + video_id
+    + "-secondary-encrypted.m4a"
+    + '"'
+    + " "
+    + "--allow-unplayable-formats"
+    + " "
+    + '"'
+    + manifest_url
+    + '"'
+)
+os.system(
+    "./"
+    if platform.system() == "Windows"
+    else ""
+    + "shaka-packager"
+    + " "
+    + "in="
+    + video_id
+    + "-encrypted.mp4"
+    + ",stream=video,output="
+    + video_id
+    + "-decrypted.mp4"
+    + " "
+    + "--enable_raw_key_decryption"
+    + " "
+    + "--keys"
+    + " "
+    + "key_id="
+    + key_video.split(":")[0]
+    + ":key="
+    + key_video.split(":")[1]
+)
+os.system(
+    "./"
+    if platform.system() == "Windows"
+    else ""
+    + " "
+    + "in="
+    + video_id
+    + "-encrypted.m4a"
+    + ",stream=audio,output="
+    + video_id
+    + "-decrypted.m4a"
+    + " "
+    + "--enable_raw_key_decryption"
+    + " "
+    + "--keys"
+    + " "
+    + "key_id="
+    + key_audio.split(":")[0]
+    + ":key="
+    + key_audio.split(":")[1]
+)
+os.system(
+    "./"
+    if platform.system() == "Windows"
+    else ""
+    + "shaka-packager"
+    + " "
+    + "in="
+    + video_id
+    + "-secondary-encrypted.m4a"
+    + ",stream=audio,output="
+    + video_id
+    + "-secondary-decrypted.m4a"
+    + " "
+    + "--enable_raw_key_decryption"
+    + " "
+    + "--keys"
+    + " "
+    + "key_id="
+    + key_audio.split(":")[0]
+    + ":key="
+    + key_audio.split(":")[1]
+)
+if os.path.exists(video_id + "-secondary-decrypted.m4a"):
+    os.system(
+        "./"
+        if platform.system() == "Windows"
+        else ""
+        + "ffmpeg"
+        + " "
+        + "-i"
+        + " "
+        + '"'
+        + video_id
+        + "-decrypted.mp4"
+        + '"'
+        + " "
+        + "-i"
+        + " "
+        + '"'
+        + video_id
+        + "-decrypted.m4a"
+        + '"'
+        + " "
+        + "-i"
+        + " "
+        + '"'
+        + video_id
+        + "-secondary-decrypted.m4a"
+        + '"'
+        + " "
+        + "-c"
+        + " "
+        + '"'
+        + "copy"
+        + '"'
+        + " "
+        + "-map"
+        + " "
+        + "0:v"
+        + " "
+        + "-map"
+        + " "
+        + "1:a"
+        + " "
+        + "-map"
+        + " "
+        + "2:a"
+        + " "
+        + '"'
+        + video_id
+        + ".mp4"
+        + '"'
+    )
 else:
-    print("Saving script to download video into file called run.bat.")
+    os.system(
+        "./"
+        if platform.system() == "Windows"
+        else "" + "rm"
+        "ffmpeg"
+        + " "
+        + "-i"
+        + " "
+        + '"'
+        + video_id
+        + "-decrypted.mp4"
+        + '"'
+        + " "
+        + "-i"
+        + " "
+        + '"'
+        + video_id
+        + "-decrypted.m4a"
+        + '"'
+        + " "
+        + "-c"
+        + " "
+        + '"'
+        + "copy"
+        + '"'
+        + " "
+        + '"'
+        + video_id
+        + ".mp4"
+        + '"'
+    )
+os.system(
+    "del"
+    if platform.system() == "Windows"
+    else "rm" + " " + '"' + video_id + "-encrypted.mp4" + '"'
+)
+os.system(
+    "del"
+    if platform.system() == "Windows"
+    else "rm" + " " + '"' + video_id + "-encrypted.m4a" + '"'
+)
+os.system(
+    "del"
+    if platform.system() == "Windows"
+    else "rm" + " " + '"' + video_id + "-secondary-encrypted.m4a" + '"'
+)
+os.system(
+    "del"
+    if platform.system() == "Windows"
+    else "rm" + " " + '"' + video_id + "-decrypted.mp4" + '"'
+)
+os.system(
+    "del"
+    if platform.system() == "Windows"
+    else "rm" + " " + '"' + video_id + "-decrypted.m4a" + '"'
+)
+os.system(
+    "del"
+    if platform.system() == "Windows"
+    else "rm" + " " + '"' + video_id + "-secondary-decrypted.m4a" + '"'
+)
 
-    with open("run.bat", "w") as f:
-        f.write(
-            ".\yt-dlp"
-            + " "
-            + "-f"
-            + " "
-            + '"'
-            + "mp4"
-            + '"'
-            + " "
-            + "--output"
-            + " "
-            + '"'
-            + video_id
-            + "-encrypted.mp4"
-            + '"'
-            + " "
-            + "--allow-unplayable-formats"
-            + " "
-            + '"'
-            + manifest_url.replace("%", "%%")
-            + '"'
-            + "\n"
-        )
-        f.write(
-            ".\yt-dlp"
-            + " "
-            + "-f"
-            + " "
-            + '"'
-            + "149:ChAKBWFjb250EgdwcmltYXJ5"
-            + '"'
-            + " "
-            + "--output"
-            + " "
-            + '"'
-            + video_id
-            + "-encrypted.m4a"
-            + '"'
-            + " "
-            + "--allow-unplayable-formats"
-            + " "
-            + '"'
-            + manifest_url.replace("%", "%%")
-            + '"'
-            + "\n"
-        )
-        f.write(
-            ".\yt-dlp"
-            + " "
-            + "-f"
-            + " "
-            + '"'
-            + "m4a"
-            + '"'
-            + " "
-            + "--output"
-            + " "
-            + '"'
-            + video_id
-            + "-encrypted.m4a"
-            + '"'
-            + " "
-            + "--allow-unplayable-formats"
-            + " "
-            + '"'
-            + manifest_url
-            + '"'
-            + "\n"
-        )
-        f.write(
-            ".\shaka-packager.exe"
-            + " "
-            + "in="
-            + video_id
-            + "-encrypted.mp4"
-            + ",stream=video,output="
-            + video_id
-            + "-decrypted.mp4"
-            + " "
-            + "--enable_raw_key_decryption"
-            + " "
-            + "--keys"
-            + " "
-            + "key_id="
-            + key_video.split(":")[0]
-            + ":key="
-            + key_video.split(":")[1]
-            + "\n"
-        )
-        f.write(
-            ".\shaka-packager.exe"
-            + " "
-            + "in="
-            + video_id
-            + "-encrypted.m4a"
-            + ",stream=audio,output="
-            + video_id
-            + "-decrypted.m4a"
-            + " "
-            + "--enable_raw_key_decryption"
-            + " "
-            + "--keys"
-            + " "
-            + "key_id="
-            + key_audio.split(":")[0]
-            + ":key="
-            + key_audio.split(":")[1]
-            + "\n"
-        )
-        f.write("del" + " " + '"' + video_id + "-encrypted.mp4" + '"' + "\n")
-        f.write("del" + " " + '"' + video_id + "-encrypted.m4a" + '"' + "\n")
-        f.write(
-            ".\\ffmpeg"
-            + " "
-            + "-i"
-            + " "
-            + '"'
-            + video_id
-            + "-decrypted.mp4"
-            + '"'
-            + " "
-            + "-i"
-            + " "
-            + '"'
-            + video_id
-            + "-decrypted.m4a"
-            + '"'
-            + " "
-            + "-c"
-            + " "
-            + '"'
-            + "copy"
-            + '"'
-            + " "
-            + '"'
-            + video_id
-            + ".mp4"
-            + '"'
-            + "\n"
-        )
-        f.write("del" + " " + '"' + video_id + "-decrypted.mp4" + '"' + "\n")
-        f.write("del" + " " + '"' + video_id + "-decrypted.m4a" + '"' + "\n")
 
-    print("Running run.bat.")
-
-    subprocess.call(["run.bat"])
-
-    print("Done.")
+print("Done.")
