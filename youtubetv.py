@@ -43,7 +43,7 @@ else:
     key_audio = output.split(b"\n")[-3].decode("utf-8")
 
 if b":" in output.split(b"\n")[-9]:
-    key_video = output.split(b"\n")[-7].decode("utf-8")
+    key_video = output.split(b"\n")[-9].decode("utf-8")
 else:
     key_video = output.split(b"\n")[-5].decode("utf-8")
 
