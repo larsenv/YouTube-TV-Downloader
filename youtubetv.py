@@ -1,11 +1,10 @@
 import DRMHeaders
-import glob
-import json
 import os
 import platform
 import requests
 import sys
 import subprocess
+import tpdyoutube
 
 
 def get_manifest_url(video_id):
@@ -35,17 +34,21 @@ video_url = get_manifest_url(video_id)
 param = video_url[0]
 manifest_url = video_url[1]
 
-output = subprocess.check_output(["python3", "tpd-keys.py", video_id, param])
+output = tpdyoutube.decrypt_content(
+    "https://tv.youtube.com/youtubei/v1/player/get_drm_license?alt=json&key=AIzaSyD-L7DIyuMgBk-B4DYmjJZ5UG-D6Y-vkMc",
+    video_id,
+    param,
+).encode("utf-8")
 
-if b":" in output.split(b"\n")[-7]:
-    key_audio = output.split(b"\n")[-7].decode("utf-8")
-else:
-    key_audio = output.split(b"\n")[-3].decode("utf-8")
+try:
+    key_audio = output.split(b"\n")[-6].decode("utf-8")
+except:
+    key_audio = output.split(b"\n")[-2].decode("utf-8")
 
-if b":" in output.split(b"\n")[-9]:
-    key_video = output.split(b"\n")[-9].decode("utf-8")
-else:
-    key_video = output.split(b"\n")[-5].decode("utf-8")
+try:
+    key_video = output.split(b"\n")[-8].decode("utf-8")
+except:
+    key_video = output.split(b"\n")[-4].decode("utf-8")
 
 print("Video URL:", manifest_url)
 print("Key Audio:", key_audio)
@@ -334,6 +337,5 @@ os.system(
     + "-secondary-decrypted.m4a"
     + '"'
 )
-
 
 print("Done.")
