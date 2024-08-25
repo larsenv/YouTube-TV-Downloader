@@ -218,51 +218,19 @@ caption_num = 0
 caption_command = [[], []]
 try:
     for c in caption:
-        pat = re.compile(
-            r'<?text start="(\d+\.\d+)" dur="(\d+\.\d+)">(.*)</text>?', re.DOTALL
-        )
-
-        def parseLine(text):
-            """Parse a subtitle."""
-            m = re.match(pat, text)
-            if m:
-                return (m.group(1), m.group(2), m.group(3))
-            else:
-                return None
-
-        def formatSrtTime(secTime):
-            sec, micro = str(secTime).split(".")
-            micro = int(micro[:3])  # Take the first three digits of microseconds
-            m, s = divmod(int(sec), 60)
-            h, m = divmod(m, 60)
-            return "{:02}:{:02}:{:02},{:03}".format(h, m, s, micro)
-
-        def convertHtml(text):
-            return text.replace("&amp;#39;", "'").replace("&amp;quot;", '"')
-
-        def printSrtLine(i, elms):
-            return "{}\n{} --> {}\n{}\n\n".format(
-                i,
-                formatSrtTime(elms[0]),
-                formatSrtTime(float(elms[0]) + float(elms[1])),
-                convertHtml(elms[2]),
-            )
-
         with open(video_id + str(caption_num) + ".xml", "wb") as f:
             f.write(requests.get(c["baseUrl"]).content)
-        with open(video_id + str(caption_num) + ".xml", "r") as infile:
-            buf = []
-            for line in infile:
-                buf.append(line)
-        # Split the buffer to get one string per tag.
-        buf = "".join(buf).split("><")
-        i = 0
-        with open(video_id + str(caption_num) + ".srt", "w") as outfile:
-            for text in buf:
-                parsed = parseLine(text)
-                if parsed:
-                    i += 1
-                    outfile.write(printSrtLine(i, parsed))
+
+        os.system(
+            sys.executable
+            + " "
+            + "convertsrt.py"
+            + " "
+            + video_id
+            + str(caption_num)
+            + ".xml"
+        )
+
         caption_command[0].append("-i")
         caption_command[0].append(video_id + str(caption_num) + ".srt")
         caption_command[1].append("-map")
