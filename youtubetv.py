@@ -3,6 +3,7 @@ import os
 import platform
 import re
 import requests
+import string
 import sys
 import tpdyoutube
 
@@ -231,6 +232,9 @@ try:
             + ".xml"
         )
 
+        if not os.path.exists(str(caption_num) + ".srt"):
+            continue
+
         caption_command[0].append("-i")
         caption_command[0].append(video_id + str(caption_num) + ".srt")
         caption_command[1].append("-map")
@@ -298,7 +302,7 @@ if os.path.exists(video_id + "-secondary-decrypted.m4a"):
         + " ".join(caption_command[1])
         + " "
         + '"'
-        + title
+        + title.translate(str.maketrans('', '', string.punctuation))
         + ".mp4"
         + '"'
     )
@@ -332,8 +336,9 @@ else:
         + " ".join(caption_command[1])
         + " "
         + '"'
-        + video_id
+        + title.translate(str.maketrans('', '', string.punctuation))
         + ".mp4"
         + '"'
     )
+
 os.system(("del" if platform.system() == "Windows" else "rm") + " " + video_id + "*")
