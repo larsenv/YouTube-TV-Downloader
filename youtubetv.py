@@ -232,7 +232,7 @@ try:
             + ".xml"
         )
 
-        if not os.path.exists(str(caption_num) + ".srt"):
+        if not os.path.exists(video_id + str(caption_num) + ".srt"):
             continue
 
         caption_command[0].append("-i")
