@@ -3,6 +3,7 @@ import os
 import platform
 import re
 import requests
+import subprocess
 import string
 import sys
 import tpdyoutube
@@ -222,15 +223,14 @@ try:
         with open(video_id + str(caption_num) + ".xml", "wb") as f:
             f.write(requests.get(c["baseUrl"]).content)
 
-        os.system(
-            sys.executable
-            + " "
-            + "convertsrt.py"
-            + " "
-            + video_id
-            + str(caption_num)
-            + ".xml"
-        )
+        try:
+            subprocess.run(
+                [sys.executable, "convertsrt.py", video_id + str(caption_num) + ".xml"],
+                check=True  # This will raise an error if the command fails
+            )
+
+        except:
+            continue
 
         if not os.path.exists(video_id + str(caption_num) + ".srt"):
             continue
