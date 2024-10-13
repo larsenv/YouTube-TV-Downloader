@@ -11,6 +11,6 @@ Furthermore, you will have to input your credentials.
 1. Go to YouTube TV and play some recording or something which is on video on demand."
 2. Open developer mode of your browser. Search for `player` on Network. Do a right-click on the URL -> Copy -> Copy as cURL.
 3. Go to https://curlconverter.com/ and paste the content. Select Python in the options of the output, then copy everything except the first line and the code starting with the line with `response = requests.post`. Paste it into a new file called DRMHeaders.py.
-4. Repeat Steps 2 and 3 but search `get_drm_headers` and paste the converted contents into a new file called DRMHeaders2.py.
+4. Repeat Steps 2 and 3 but search `get_drm_license` and paste the converted contents into a new file called DRMHeaders2.py.
 
 TPD94 created his ripper named TPD-Keys which this uses in order to download
