@@ -226,7 +226,7 @@ try:
         try:
             subprocess.run(
                 [sys.executable, "convertsrt.py", video_id + str(caption_num) + ".xml"],
-                check=True  # This will raise an error if the command fails
+                check=True,  # This will raise an error if the command fails
             )
 
         except:
@@ -302,7 +302,7 @@ if os.path.exists(video_id + "-secondary-decrypted.m4a"):
         + " ".join(caption_command[1])
         + " "
         + '"'
-        + title.translate(str.maketrans('', '', string.punctuation))
+        + title.translate(str.maketrans("", "", string.punctuation))
         + ".mp4"
         + '"'
     )
@@ -333,10 +333,18 @@ else:
         + "copy"
         + '"'
         + " "
+        + "-map"
+        + " "
+        + "0:v"
+        + " "
+        + "-map"
+        + " "
+        + "1:a"
+        + " "
         + " ".join(caption_command[1])
         + " "
         + '"'
-        + title.translate(str.maketrans('', '', string.punctuation))
+        + title.translate(str.maketrans("", "", string.punctuation))
         + ".mp4"
         + '"'
     )
