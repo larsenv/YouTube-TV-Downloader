@@ -21,7 +21,13 @@ def get_manifest_url(video_id):
     return [
         response.json()["streamingData"]["drmParams"],
         response.json()["streamingData"]["dashManifestUrl"],
-        response.json()["captions"]["playerCaptionsTracklistRenderer"]["captionTracks"],
+        (
+            response.json()["captions"]["playerCaptionsTracklistRenderer"][
+                "captionTracks"
+            ]
+            if "captions" in response.json()
+            else None
+        ),
         response.json()["videoDetails"]["title"],
     ]
 
