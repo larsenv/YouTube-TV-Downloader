@@ -2,7 +2,7 @@
 
 This'll let you download YouTube TV content which is recorded or on demand by running youtubetv.py. You will need a YouTube TV account and a Widevine CDM L3.
 
-You will have to install the requirements by running `pip install -r requirements.txt`, then you can run youtubetv.py by running `python youtubetv.py <video ID>`.
+You will have to install the requirements by running `pip install -r requirements.txt`, then you can run youtubetv.py by running `python youtubetv.py`.
 
 A WVD of your Widevine CDM L3 needs to be in the directory. If your CDM isn't in that format, you can run `pywidevine create-device -k "/PATH/TO/device_private_key" -c "/PATH/TO/device_client_id_blob" -t "ANDROID" -l 3`.
 
