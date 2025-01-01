@@ -1,4 +1,5 @@
 import DRMHeaders
+import DRMHeaders2
 import os
 import platform
 import re
@@ -7,7 +8,6 @@ import subprocess
 import string
 import sys
 import tpdyoutube
-
 
 def get_manifest_url(video_id):
     response = requests.post(
