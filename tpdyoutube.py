@@ -52,19 +52,24 @@ def decrypt_content(license_url, video_id, drmparams):
     )
 
     # Replace invalid characters
-    license = license.json()["license"].replace("-", "+").replace("_", "/")
-
-    # Parse the license
-    cdm.parse_license(session_id, license)
-
-    # assign variable for returned keys
-    returned_keys = ""
-    for key in cdm.get_keys(session_id):
-        if key.type != "SIGNING":
-            returned_keys += f"{key.kid.hex}:{key.key.hex()}\n"
-
-    # close session, disposes of session data
-    cdm.close(session_id)
+    try:
+        license = license.json()["license"].replace("-", "+").replace("_", "/")
+        
+        # Parse the license
+        cdm.parse_license(session_id, license)
+    
+        # assign variable for returned keys
+        returned_keys = ""
+        for key in cdm.get_keys(session_id):
+            if key.type != "SIGNING":
+                returned_keys += f"{key.kid.hex}:{key.key.hex()}\n"
+    
+        # close session, disposes of session data
+        cdm.close(session_id)
+    except:
+        print("Error grabbing license / keys. Try copying the license again")
+        print("If the problem persists, it's possible that your Widevine CDM is bad")
+        print("Or this content might be using L1 Widevine which is not tested on this script")
 
     # Return the keys
     return returned_keys
