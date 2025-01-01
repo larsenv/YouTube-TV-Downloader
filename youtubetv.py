@@ -34,12 +34,7 @@ def get_manifest_url(video_id):
 
 print("YouTube TV Downloader by Larsenv\n")
 
-if len(sys.argv) != 2:
-    print("Usage: youtubetv.py <video_id>")
-
-    sys.exit(1)
-
-video_id = sys.argv[1]
+video_id = DRMHeaders2.json_data["videoId"]
 video_url = get_manifest_url(video_id)
 param = video_url[0]
 manifest_url = video_url[1]
