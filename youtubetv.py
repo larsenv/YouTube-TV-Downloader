@@ -9,6 +9,7 @@ import string
 import sys
 import tpdyoutube
 
+
 def get_manifest_url(video_id):
     response = requests.post(
         "https://tv.youtube.com/youtubei/v1/player",
@@ -47,175 +48,34 @@ output = tpdyoutube.decrypt_content(
     param,
 ).encode("utf-8")
 
-try:
-    key_audio = output.split(b"\n")[-6].decode("utf-8")
-except:
-    key_audio = output.split(b"\n")[-2].decode("utf-8")
-
-try:
-    key_video = output.split(b"\n")[-8].decode("utf-8")
-except:
-    key_video = output.split(b"\n")[-4].decode("utf-8")
-
 print("Video URL:", manifest_url)
-print("Key Audio:", key_audio)
-print("Key Video:", key_video)
+print("Keys:\n\n", output.decode("utf-8")[1:])
 
 print("\n")
 
-print(manifest_url.replace("%", "%%"))
-
 os.system(
     (".\\" if platform.system() == "Windows" else "")
-    + "yt-dlp"
-    + " "
-    + "-f"
-    + " "
-    + '"'
-    + "mp4"
-    + '"'
-    + " "
-    + "--output"
-    + " "
-    + '"'
-    + video_id
-    + "-encrypted.mp4"
-    + '"'
-    + " "
-    + "--allow-unplayable-formats"
+    + "N_m3u8DL-RE"
     + " "
     + '"'
     + manifest_url
     + '"'
-)
-os.system(
-    (".\\" if platform.system() == "Windows" else "")
-    + "yt-dlp"
     + " "
-    + "-f"
-    + " "
-    + '"'
-    + "149:ChAKBWFjb250EgdwcmltYXJ5"
-    + '"'
-    + " "
-    + "--output"
+    + "--save-name"
     + " "
     + '"'
     + video_id
-    + "-encrypted.m4a"
     + '"'
     + " "
-    + "--allow-unplayable-formats"
+    + "--auto-select"
     + " "
-    + '"'
-    + manifest_url
-    + '"'
-)
-os.system(
-    (".\\" if platform.system() == "Windows" else "")
-    + "yt-dlp"
+    + "--mux-after-done"
     + " "
-    + "-f"
+    + "format=mp4"
     + " "
-    + '"'
-    + "m4a"
-    + '"'
+    + "--key"
     + " "
-    + "--output"
-    + " "
-    + '"'
-    + video_id
-    + "-encrypted.m4a"
-    + '"'
-    + " "
-    + "--allow-unplayable-formats"
-    + " "
-    + '"'
-    + manifest_url
-    + '"'
-)
-os.system(
-    (".\\" if platform.system() == "Windows" else "")
-    + "yt-dlp"
-    + " "
-    + "-f"
-    + " "
-    + '"'
-    + "149:ChIKBWFjb250EglzZWNvbmRhcnk"
-    + '"'
-    + " "
-    + "--output"
-    + " "
-    + '"'
-    + video_id
-    + "-secondary-encrypted.m4a"
-    + '"'
-    + " "
-    + "--allow-unplayable-formats"
-    + " "
-    + '"'
-    + manifest_url
-    + '"'
-)
-os.system(
-    (".\\" if platform.system() == "Windows" else "")
-    + "shaka-packager"
-    + " "
-    + "in="
-    + video_id
-    + "-encrypted.mp4"
-    + ",stream=video,output="
-    + video_id
-    + "-decrypted.mp4"
-    + " "
-    + "--enable_raw_key_decryption"
-    + " "
-    + "--keys"
-    + " "
-    + "key_id="
-    + key_video.split(":")[0]
-    + ":key="
-    + key_video.split(":")[1]
-)
-os.system(
-    (".\\" if platform.system() == "Windows" else "")
-    + "shaka-packager"
-    + " "
-    + "in="
-    + video_id
-    + "-encrypted.m4a"
-    + ",stream=audio,output="
-    + video_id
-    + "-decrypted.m4a"
-    + " "
-    + "--enable_raw_key_decryption"
-    + " "
-    + "--keys"
-    + " "
-    + "key_id="
-    + key_audio.split(":")[0]
-    + ":key="
-    + key_audio.split(":")[1]
-)
-os.system(
-    (".\\" if platform.system() == "Windows" else "")
-    + "shaka-packager"
-    + " "
-    + "in="
-    + video_id
-    + "-secondary-encrypted.m4a"
-    + ",stream=audio,output="
-    + video_id
-    + "-secondary-decrypted.m4a"
-    + " "
-    + "--enable_raw_key_decryption"
-    + " "
-    + "--keys"
-    + " "
-    + "key_id="
-    + key_audio.split(":")[0]
-    + ":key="
-    + key_audio.split(":")[1]
+    + " --key ".join(output.decode("utf-8").split("\n"))[:-7]
 )
 caption_num = 0
 caption_command = [[], []]
@@ -239,12 +99,7 @@ try:
         caption_command[0].append("-i")
         caption_command[0].append(video_id + str(caption_num) + ".srt")
         caption_command[1].append("-map")
-        caption_command[1].append(
-            str(
-                (3 if os.path.exists(video_id + "-secondary-decrypted.m4a") else 2)
-                + caption_num
-            )
-        )
+        caption_command[1].append("1")
         caption_command[1].append("-c:s")
         caption_command[1].append("mov_text")
         caption_command[1].append("-metadata:s:s:" + str(caption_num))
@@ -254,7 +109,7 @@ try:
         caption_num += 1
 except:
     pass
-if os.path.exists(video_id + "-secondary-decrypted.m4a"):
+if os.path.exists(video_id + "0.srt"):
     os.system(
         (".\\" if platform.system() == "Windows" else "")
         + "ffmpeg"
@@ -263,21 +118,7 @@ if os.path.exists(video_id + "-secondary-decrypted.m4a"):
         + " "
         + '"'
         + video_id
-        + "-decrypted.mp4"
-        + '"'
-        + " "
-        + "-i"
-        + " "
-        + '"'
-        + video_id
-        + "-decrypted.m4a"
-        + '"'
-        + " "
-        + "-i"
-        + " "
-        + '"'
-        + video_id
-        + "-secondary-decrypted.m4a"
+        + ".mp4"
         + '"'
         + " "
         + " ".join(caption_command[0])
@@ -290,15 +131,7 @@ if os.path.exists(video_id + "-secondary-decrypted.m4a"):
         + " "
         + "-map"
         + " "
-        + "0:v"
-        + " "
-        + "-map"
-        + " "
-        + "1:a"
-        + " "
-        + "-map"
-        + " "
-        + "2:a"
+        + "0"
         + " "
         + " ".join(caption_command[1])
         + " "
@@ -307,47 +140,3 @@ if os.path.exists(video_id + "-secondary-decrypted.m4a"):
         + ".mp4"
         + '"'
     )
-else:
-    os.system(
-        (".\\" if platform.system() == "Windows" else "")
-        + "ffmpeg"
-        + " "
-        + "-i"
-        + " "
-        + '"'
-        + video_id
-        + "-decrypted.mp4"
-        + '"'
-        + " "
-        + "-i"
-        + " "
-        + '"'
-        + video_id
-        + "-decrypted.m4a"
-        + '"'
-        + " "
-        + " ".join(caption_command[0])
-        + " "
-        + "-c"
-        + " "
-        + '"'
-        + "copy"
-        + '"'
-        + " "
-        + "-map"
-        + " "
-        + "0:v"
-        + " "
-        + "-map"
-        + " "
-        + "1:a"
-        + " "
-        + " ".join(caption_command[1])
-        + " "
-        + '"'
-        + title.translate(str.maketrans("", "", string.punctuation))
-        + ".mp4"
-        + '"'
-    )
-
-os.system(("del" if platform.system() == "Windows" else "rm") + " " + video_id + "*")
