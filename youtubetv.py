@@ -140,3 +140,5 @@ if os.path.exists(video_id + "0.srt"):
         + ".mp4"
         + '"'
     )
+
+os.system(("del" if platform.system() == "Windows" else "rm") + " " + video_id + "*")
