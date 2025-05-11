@@ -307,8 +307,6 @@ if os.path.exists(video_id + "-secondary-decrypted.m4a"):
         + ".mp4"
         + '"'
     )
-<<<<<<< HEAD
-=======
 else:
     os.system(
         (".\\" if platform.system() == "Windows" else "")
@@ -351,6 +349,5 @@ else:
         + ".mp4"
         + '"'
     )
->>>>>>> parent of b8be657 (Use nm3u8DL-RE instead of this mess, not a April 1 joke)
 
 os.system(("del" if platform.system() == "Windows" else "rm") + " " + video_id + "*")
