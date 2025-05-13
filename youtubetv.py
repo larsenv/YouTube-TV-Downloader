@@ -48,9 +48,9 @@ output = tpdyoutube.decrypt_content(
     param,
 ).encode("utf-8")
 
-print("Video URL:", manifest_url)
+print("Video URL:", manifest_url, "\n")
 
-print("Keys:\n\n", output.decode("utf-8"))
+print("Keys:\n\n" + output.decode("utf-8"))
 
 os.system(
     (".\\" if platform.system() == "Windows" else "")
