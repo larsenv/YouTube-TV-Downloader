@@ -61,6 +61,10 @@ os.system(
     + manifest_url
     + '"'
     + " "
+    + "--decryption-engine"
+    + " "
+    + "shaka_packager"
+    + " "
     + "--save-name"
     + " "
     + '"'
@@ -73,9 +77,6 @@ os.system(
     + " "
     + "format=mp4"
     + " "
-    + "--decryption-engine"
-    + " "
-    + "shaka_packager"
     + " "
     + "--key"
     + " "
