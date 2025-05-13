@@ -77,7 +77,6 @@ os.system(
     + " "
     + "format=mp4"
     + " "
-    + " "
     + "--key"
     + " "
     + " --key ".join(output.decode("utf-8").split("\n"))[:-7]
