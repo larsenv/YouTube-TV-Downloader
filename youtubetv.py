@@ -75,7 +75,7 @@ os.system(
     + " "
     + "--decryption-engine"
     + " "
-    + "mp4decrypt"
+    + "shaka_packager"
     + " "
     + "--key"
     + " "
