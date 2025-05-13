@@ -4,7 +4,6 @@ import os
 import platform
 import re
 import requests
-import shutil
 import subprocess
 import string
 import sys
@@ -49,9 +48,10 @@ output = tpdyoutube.decrypt_content(
     param,
 ).encode("utf-8")
 
-print("Video URL:", manifest_url, "\n")
+print("Video URL:", manifest_url)
+print("Keys:\n\n", output.decode("utf-8")[1:])
 
-print("Key:\n\n" + output.decode("utf-8"))
+print("\n")
 
 os.system(
     (".\\" if platform.system() == "Windows" else "")
@@ -81,51 +81,66 @@ os.system(
     + " "
     + " --key ".join(output.decode("utf-8").split("\n"))[:-7]
 )
-
-shutil.move(
-    video_id + ".mp4",
-    title.translate(str.maketrans("", "", string.punctuation)) + ".mp4",
-)
-
 caption_num = 0
-
+caption_command = [[], []]
 try:
     for c in caption:
-        with open(
-            title.translate(str.maketrans("", "", string.punctuation))
-            + "-"
-            + str(caption_num)
-            + ".xml",
-            "wb",
-        ) as f:
+        with open(video_id + str(caption_num) + ".xml", "wb") as f:
             f.write(requests.get(c["baseUrl"]).content)
 
         try:
             subprocess.run(
-                [
-                    sys.executable,
-                    "convertsrt.py",
-                    title.translate(str.maketrans("", "", string.punctuation))
-                    + "-"
-                    + str(caption_num)
-                    + ".xml",
-                ],
+                [sys.executable, "convertsrt.py", video_id + str(caption_num) + ".xml"],
                 check=True,  # This will raise an error if the command fails
             )
 
         except:
             continue
 
-        if not os.path.exists(
-            title.translate(str.maketrans("", "", string.punctuation))
-            + "-"
-            + str(caption_num)
-            + ".srt"
-        ):
+        if not os.path.exists(video_id + str(caption_num) + ".srt"):
             continue
 
+        caption_command[0].append("-i")
+        caption_command[0].append(video_id + str(caption_num) + ".srt")
+        caption_command[1].append("-map")
+        caption_command[1].append("1")
+        caption_command[1].append("-c:s")
+        caption_command[1].append("mov_text")
+        caption_command[1].append("-metadata:s:s:" + str(caption_num))
+        caption_command[1].append("language=" + c["languageCode"])
+        caption_command[1].append("-metadata:s:s:" + str(caption_num))
+        caption_command[1].append("title=" + '"' + c["trackName"] + '"')
         caption_num += 1
 except:
     pass
-
-os.system(("del" if platform.system() == "Windows" else "rm") + " " + "*.xml")
+if os.path.exists(video_id + "0.srt"):
+    os.system(
+        (".\\" if platform.system() == "Windows" else "")
+        + "ffmpeg"
+        + " "
+        + "-i"
+        + " "
+        + '"'
+        + video_id
+        + ".mp4"
+        + '"'
+        + " "
+        + " ".join(caption_command[0])
+        + " "
+        + "-c"
+        + " "
+        + '"'
+        + "copy"
+        + '"'
+        + " "
+        + "-map"
+        + " "
+        + "0"
+        + " "
+        + " ".join(caption_command[1])
+        + " "
+        + '"'
+        + title.translate(str.maketrans("", "", string.punctuation))
+        + ".mp4"
+        + '"'
+    )
