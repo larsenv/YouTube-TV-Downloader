@@ -72,9 +72,15 @@ os.system(
     + " "
     + "--select-audio"
     + " "
-    + "all"
+    + 'role="all":for=best3'
     + " "
-    + "--auto-select"
+    + "--select-subtitle"
+    + " "
+    + "best"
+    + " "
+    + "--select-video"
+    + " "
+    + "best"
     + " "
     + "--mux-after-done"
     + " "
@@ -147,3 +153,6 @@ if os.path.exists(video_id + "0.srt"):
         + ".mp4"
         + '"'
     )
+
+os.system(("del" if platform.system() == "Windows" else "rm") + " " + "*.xml")
+os.system(("del" if platform.system() == "Windows" else "rm") + " " + "*.srt")
