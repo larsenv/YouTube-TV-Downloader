@@ -60,15 +60,19 @@ os.system(
     + manifest_url
     + '"'
     + " "
-    + "--decryption-engine"
-    + " "
-    + "shaka_packager"
-    + " "
     + "--save-name"
     + " "
     + '"'
     + video_id
     + '"'
+    + " "
+    + "--decryption-engine"
+    + " "
+    + "shaka_packager"
+    + " "
+    + "--select-audio"
+    + " "
+    + "all"
     + " "
     + "--auto-select"
     + " "
